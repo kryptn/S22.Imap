@@ -31,8 +31,8 @@ namespace S22.Imap {
 		int tag = 0;
 		string selectedMailbox;
 		string defaultMailbox = "INBOX";
-		event EventHandler<IdleMessageEventArgs> newMessageEvent;
-		event EventHandler<IdleMessageEventArgs> messageDeleteEvent;
+		public virtual event EventHandler<IdleMessageEventArgs> newMessageEvent;
+        public virtual event EventHandler<IdleMessageEventArgs> messageDeleteEvent;
 		bool hasEvents {
 			get {
 				return newMessageEvent != null || messageDeleteEvent != null;
@@ -41,20 +41,20 @@ namespace S22.Imap {
 		bool idling;
 		Thread idleThread, idleDispatch;
 		int pauseRefCount = 0;
-		SafeQueue<string> idleEvents = new SafeQueue<string>();
+        protected SafeQueue<string> idleEvents = new SafeQueue<string>();
 		System.Timers.Timer noopTimer = new System.Timers.Timer();
 		static readonly TraceSource ts = new TraceSource("S22.Imap");
 
-		/// <summary>
-		/// The default mailbox to operate on.
-		/// </summary>
-		/// <exception cref="ArgumentNullException">The property is being set and the value is
-		/// null.</exception>
-		/// <exception cref="ArgumentException">The property is being set and the value is the empty
-		/// string.</exception>
-		/// <remarks>The default value for this property is "INBOX" which is a special name reserved
-		/// to mean "the primary mailbox for this user on this server".</remarks>
-		public string DefaultMailbox {
+        /// <summary>
+        /// The default mailbox to operate on.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The property is being set and the value is
+        /// null.</exception>
+        /// <exception cref="ArgumentException">The property is being set and the value is the empty
+        /// string.</exception>
+        /// <remarks>The default value for this property is "INBOX" which is a special name reserved
+        /// to mean "the primary mailbox for this user on this server".</remarks>
+        public string DefaultMailbox {
 			get {
 				return defaultMailbox;
 			}
@@ -84,6 +84,7 @@ namespace S22.Imap {
 		public event EventHandler<IdleMessageEventArgs> NewMessage {
 			add {
 				newMessageEvent += value;
+                
 				StartIdling();
 			}
 			remove {
@@ -1552,7 +1553,7 @@ namespace S22.Imap {
 		/// <exception cref="NotAuthenticatedException">The method was called in non-authenticated
 		/// state, i.e. before logging in.</exception>
 		/// <remarks>The highest UID usually corresponds to the newest message in a mailbox.</remarks>
-		uint GetHighestUID(string mailbox = null) {
+		protected uint GetHighestUID(string mailbox = null) {
 			AssertValid();
 			lock (sequenceLock) {
 				PauseIdling();
@@ -2127,7 +2128,7 @@ namespace S22.Imap {
 		/// Blocks on a queue and wakes up whenever a new notification is put into the queue. The
 		/// notification is then examined and dispatched as an event.
 		/// </summary>
-		void EventDispatcher() {
+		protected virtual void EventDispatcher() {
 			uint lastUid = 0;
 			while (true) {
 				string response = idleEvents.Dequeue();

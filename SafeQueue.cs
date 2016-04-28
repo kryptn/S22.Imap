@@ -5,7 +5,7 @@ namespace S22.Imap {
 	/// <summary>
 	/// A thread-safe Queue.
 	/// </summary>
-	internal class SafeQueue<T> {
+	public class SafeQueue<T> {
 		readonly Queue<T> _queue = new Queue<T>();
 
 		/// <summary>

@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="BodystructureTest.cs" />
     <Compile Include="EncodedWordTest.cs" />
+    <Compile Include="EventDispatcherOverrideTest.cs" />
     <Compile Include="ImapListTest.cs" />
     <Compile Include="MailMessageTest.cs" />
     <Compile Include="MessageBuilderTest.cs" />
